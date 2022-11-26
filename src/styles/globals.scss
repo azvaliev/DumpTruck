@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, [data-nextjs-scroll-focus-boundary] {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+* {
+  @apply text-black dark:text-white transition-colors duration-300;
+}
+
+h1 {
+  @apply text-3xl;
+}
