@@ -1,10 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { z } from 'zod';
-import Redis from 'ioredis';
 import cuid from 'cuid';
-
-// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-const redis = new Redis(process.env.REDIS_URL!);
+import redis from 'src/server/redis';
 
 const reqBodySchema = z.object({
   content: z.string().min(1),
@@ -26,11 +23,11 @@ async function Handler(req: NextApiRequest, res: NextApiResponse) {
   const { content } = reqBodySchema.parse(req.body);
   const pasteID = cuid();
 
-  await redis.setex(pasteID, 3600, content);
+  await redis.connect();
+  await redis.SETEX(pasteID, 3600, content);
+  await redis.QUIT();
 
-  redis.disconnect();
-
-  const pasteURL = `${baseURL}/${pasteID}`;
+  const pasteURL = `${baseURL}/paste/${pasteID}`;
   const pasteURLEncoded = encodeURIComponent(pasteURL);
 
   res.writeHead(303, { Location: `/create/result/${pasteURLEncoded}` }).end();
