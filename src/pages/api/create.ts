@@ -21,7 +21,7 @@ async function Handler(req: NextApiRequest, res: NextApiResponse) {
 
   const requestAllowed = createPasteRateLimiter.requestAllowed(ip || '');
   if (!requestAllowed) {
-    res.status(429).end();
+    res.status(429).send('Too Many Requests. Try Again Later')
     return;
   }
 
