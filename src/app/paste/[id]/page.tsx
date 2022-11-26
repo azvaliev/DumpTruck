@@ -1,4 +1,5 @@
 import redis from 'src/server/redis';
+import { notFound } from 'next/navigation';
 
 type PastePageProps = {
   params: {
@@ -10,6 +11,10 @@ async function PastePage({ params }: PastePageProps): Promise<JSX.Element> {
   await redis.connect();
   const paste = await redis.GETDEL(params.id);
   await redis.QUIT();
+  
+  if (!paste?.trim()) {
+    notFound()
+  }
 
   return (
     <main className="grid w-full h-full place-items-center">
