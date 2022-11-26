@@ -1,3 +1,5 @@
+"use client";
+
 function Index(): JSX.Element {
   return (
     <main className="text-center">
