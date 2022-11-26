@@ -10,6 +10,12 @@ const config = {
   },
   experimental: {
     appDir: true,
+  },
+  async rewrites() {
+    return [{
+      source: '/',
+      destination: '/index',
+    }]
   }
 };
 export default config;
