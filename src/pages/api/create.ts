@@ -2,6 +2,10 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { z } from 'zod';
 import cuid from 'cuid';
 import redis from 'src/server/redis';
+import RateLimitCache from 'src/server/rate-limit-cache';
+import requestIp from 'request-ip';
+
+const createPasteRateLimiter = new RateLimitCache();
 
 const reqBodySchema = z.object({
   content: z.string().min(1),
@@ -13,8 +17,11 @@ async function Handler(req: NextApiRequest, res: NextApiResponse) {
     return;
   }
 
-  if (!req.headers.origin) {
-    res.status(400).end('Missing Origin Header');
+  const ip = requestIp.getClientIp(req);
+
+  const requestAllowed = createPasteRateLimiter.requestAllowed(ip || '');
+  if (!requestAllowed) {
+    res.status(429).end();
     return;
   }
 

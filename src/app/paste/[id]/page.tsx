@@ -1,4 +1,4 @@
-import redis from "src/server/redis";
+import redis from 'src/server/redis';
 
 type PastePageProps = {
   params: {
