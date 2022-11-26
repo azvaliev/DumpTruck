@@ -1,5 +1,5 @@
 
-const MAX_REQUESTS_PER_HOUR = 2;
+const MAX_REQUESTS_PER_HOUR = 20;
 const ONE_HOUR_IN_MS = 3.6e+6;
 
 type CacheData = {
