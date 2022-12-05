@@ -1,15 +1,16 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { z } from 'zod';
-import cuid from 'cuid';
-import redis from 'src/server/redis';
 import RateLimitCache from 'src/server/rate-limit-cache';
 import requestIp from 'request-ip';
+import { PrismaClient } from '@prisma/client';
 
 const createPasteRateLimiter = new RateLimitCache();
 
 const reqBodySchema = z.object({
   content: z.string().min(1),
 });
+
+const prisma = new PrismaClient();
 
 async function Handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -28,13 +29,14 @@ async function Handler(req: NextApiRequest, res: NextApiResponse) {
   const baseURL = req.headers.origin || `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
 
   const { content } = reqBodySchema.parse(req.body);
-  const pasteID = cuid();
 
-  await redis.connect();
-  await redis.SETEX(pasteID, 3600, content);
-  await redis.QUIT();
+  const paste = await prisma.paste.create({
+    data: {
+      data: content,
+    }
+  })
 
-  const pasteURL = `${baseURL}/paste/${pasteID}`;
+  const pasteURL = `${baseURL}/paste/${paste.id}`;
   const pasteURLEncoded = encodeURIComponent(pasteURL);
 
   res.writeHead(303, { Location: `/create/result/${pasteURLEncoded}` }).end();

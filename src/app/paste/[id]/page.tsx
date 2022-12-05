@@ -1,5 +1,5 @@
-import redis from 'src/server/redis';
 import { notFound } from 'next/navigation';
+import { PrismaClient } from '@prisma/client';
 
 type PastePageProps = {
   params: {
@@ -7,19 +7,26 @@ type PastePageProps = {
   }
 }
 
+const prisma = new PrismaClient();
+
 async function PastePage({ params }: PastePageProps): Promise<JSX.Element> {
-  await redis.connect();
-  const paste = await redis.GETDEL(params.id);
-  await redis.QUIT();
-  
-  if (!paste?.trim()) {
+  const paste = await prisma.paste.findUnique({
+    select: {
+      data: true,
+    },
+    where: {
+      id: params.id,
+    }
+  })
+
+  if (!paste) {
     notFound()
   }
 
   return (
     <main className="grid w-full h-full place-items-center">
       <code className="w-[90%] h-[90%] bg-stone-300 dark:bg-stone-800 rounded-xl p-4 overflow-y-scroll">
-        {paste}
+        {paste.data}
       </code>
     </main>
   )
