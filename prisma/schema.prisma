@@ -12,6 +12,6 @@ datasource db {
 
 model Paste {
   id String @id @default(cuid())
-  data String @db.MediumText
+  data String @db.LongText()
   createdAt DateTime @default(now())
 }
