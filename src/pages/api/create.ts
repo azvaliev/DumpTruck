@@ -44,3 +44,11 @@ async function Handler(req: NextApiRequest, res: NextApiResponse) {
 }
 
 export default Handler;
+
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '10mb'
+    }
+  }
+}
