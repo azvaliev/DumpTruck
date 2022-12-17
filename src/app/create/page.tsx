@@ -4,7 +4,7 @@ function Create(): JSX.Element {
       <h1 className="text-center">Create a Dumpster Fire</h1>
       <form className="flex flex-col" action="/api/create" method="POST">
         <textarea
-          className="w-full h-[75vh] mt-4 bg-stone-200 dark:bg-stone-900 rounded-xl p-4 focus:outline-none focus:border-none resize-none placeholder-black dark:placeholder-[unset]"
+          className="w-full h-[75vh] mt-4 bg-stone-200 dark:bg-stone-900 rounded-xl p-4 focus:outline-none focus:border-none resize-none placeholder-black dark:placeholder-[#9CA3AF]"
           name="content"
           id="content"
           placeholder="Paste Your Content Here"
