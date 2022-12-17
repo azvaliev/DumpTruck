@@ -3,10 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "db:build": "docker build . -t dumptruck-db",
+    "db:start": "docker run -p 3306:3306 -t dumptruck-db",
+    "db:stop": "docker rm $(docker stop $(docker ps -a -q --filter ancestor=dumptruck-db --format=\"{{.ID}}\"))",
+    "db:sync": "prisma db push",
+    "db:env": "echo DATABASE_URL='mysql://root:password@localhost:3306/dev' > .env",
+    "db:shell": "mysql -h localhost -P 3306 --protocol=tcp -u root --database=dev --password=password",
     "build": "next build",
     "dev": "next dev",
     "lint": "next lint",
-    "start": "next start"
+    "start": "next start",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@next/font": "^13.0.5",

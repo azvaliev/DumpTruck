@@ -8,6 +8,7 @@ const createPasteRateLimiter = new RateLimitCache();
 
 const reqBodySchema = z.object({
   content: z.string().min(1),
+  'burn-after-read': z.enum(['on', 'off']).default('off')
 });
 
 const prisma = new PrismaClient();
@@ -28,11 +29,12 @@ async function Handler(req: NextApiRequest, res: NextApiResponse) {
 
   const baseURL = req.headers.origin || `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
 
-  const { content } = reqBodySchema.parse(req.body);
+  const { content, 'burn-after-read': burnAfterRead } = reqBodySchema.parse(req.body);
 
   const paste = await prisma.paste.create({
     data: {
       data: content,
+      burnOnRetrieval: burnAfterRead === 'on',
     }
   })
 
