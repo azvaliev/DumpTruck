@@ -13,6 +13,7 @@ async function PastePage({ params }: PastePageProps): Promise<JSX.Element> {
   const paste = await prisma.paste.findUnique({
     select: {
       data: true,
+      burnOnRetrieval: true,
     },
     where: {
       id: params.id,
@@ -21,6 +22,14 @@ async function PastePage({ params }: PastePageProps): Promise<JSX.Element> {
 
   if (!paste) {
     notFound()
+  }
+
+  if (paste.burnOnRetrieval) {
+    await prisma.paste.delete({
+      where: {
+        id: params.id
+      }
+    });
   }
 
   return (
